@@ -80,6 +80,10 @@ public class WarehouseManager implements ItemManager, ItemSummary {
 
     @Override
     public int sumOfAllProducts() {
+        Map.Entry<String, Item>[] data = (Map.Entry<String, Item>[]) this.itemsMap.entrySet().toArray();
+
+
+
         int totalProducts = 0;
         for(Map.Entry<String, Item > entry:this.itemsMap.entrySet()){
             totalProducts += entry.getValue().getCantitate();

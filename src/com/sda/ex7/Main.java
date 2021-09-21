@@ -46,6 +46,7 @@ JSON example:
 
 import netscape.javascript.JSObject;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.util.*;
 
@@ -105,17 +106,46 @@ public class Main {
                 System.out.println(" - " + town);
             }
         }
+        System.out.println("                        ");
 
-        exportToJSON(planMap);
+        String result = exportToJSON(planMap);
+
+        System.out.println("                        ");
+
+        importFromJSON(result);
 
 
     }
 
-    public static void exportToJSON(Map<String, List<String>> planMap) {
+    public static String exportToJSON(Map<String, List<String>> planMap) {
         JSONObject planJSON = new JSONObject();
         for (Map.Entry<String, List<String>> entry : planMap.entrySet()) {
             planJSON.put(entry.getKey(), entry.getValue());
         }
+        System.out.println("exportAsString");
         System.out.println(planJSON.toJSONString());
+        return planJSON.toJSONString();
+    }
+
+    public static void importFromJSON (String jsonString){
+        System.out.println("importFromString");
+        JSONParser jsonParser = new JSONParser();
+        try {
+            JSONObject json = (JSONObject) jsonParser.parse(jsonString);
+
+            Iterator<String> iterator = json.keySet().iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                System.out.println(key);
+
+                List<String> townslist = (List<String>) json.get(key);
+                for (String town : townslist) {
+                    System.out.println(" - " + town);
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

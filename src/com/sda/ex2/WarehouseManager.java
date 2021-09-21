@@ -83,6 +83,8 @@ public class WarehouseManager implements ItemManager, ItemSummary {
         Map.Entry<String, Item>[] data = (Map.Entry<String, Item>[]) this.itemsMap.entrySet().toArray();
 
 
+//        test
+
 
         int totalProducts = 0;
         for(Map.Entry<String, Item > entry:this.itemsMap.entrySet()){

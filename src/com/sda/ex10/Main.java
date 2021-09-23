@@ -11,7 +11,7 @@ import java.util.Scanner;
  * b. OOP - all employees (including the director), inherit from the common class (Employee).
  * Each employee may have a work tool (e.g. Hammer, Laptop, PointingFinger).
  * c. collections - appropriate grouping of data
- * d. * threads - use the while loop only to receive orders from the user, use the threads to display status / modify each object.
+ * d. * threads -  use the while loop only to receive orders from the user, use the threads to display status / modify each object.
  * e. ** additional functionalities – e.g. displaying information about who and how much has earned since the beginning of work (counting every few seconds), "deduct in succession" - sorted list of employees (by name), employee data can be loaded from the file at the beginning.
  * f. ** support for the Director class - displaying information "everybody works - great!", "where is <name> ?!" (e.g. if the employee has left earlier).
  */
@@ -21,7 +21,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         boolean isRunning = true;
 
-        List<Employee> employeeList = new ArrayList<>();
+        final List<Employee> employeeList = new ArrayList<>();
 
         while (isRunning) {
             System.out.println("1. Create director");
@@ -85,10 +85,30 @@ public class Main {
                     }
                     break;
                 case "5":
-                    exportData(employeeList);
+                    //Interfata anonima
+                    Runnable functionThread = new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(1000 * 3);
+                                exportData(employeeList);
+
+                            } catch (Exception e) {
+                                System.err.println(e.getMessage());
+
+                            }
+                        }
+                    };
+                    Thread exportThread = new Thread(functionThread);
+                    exportThread.start();
                     break;
                 case "6":
-                   employeeList = importData("employees.txt");
+                    List<Employee> temp = importData("employees.txt");
+                    for (Employee emp : temp) {
+                        employeeList.add(emp);
+
+                    }
+
                     break;
                 case "exit":
                     isRunning = false;
@@ -98,7 +118,7 @@ public class Main {
         }
     }
 
-    public static void exportData(List<Employee> employesList)  {
+    public static void exportData(List<Employee> employesList) {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream("employees.txt");
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
@@ -106,7 +126,7 @@ public class Main {
 
             objectOutputStream.close();
             System.out.println("Export with success!");
-        }catch (Exception e){
+        } catch (Exception e) {
             //err =>afiseaza textul cu rosu in consola
             System.err.println(e.getMessage());
             e.printStackTrace();
@@ -115,13 +135,13 @@ public class Main {
 
     }
 
-    public static List<Employee>  importData(String fileName) {
+    public static List<Employee> importData(String fileName) {
         try {
             FileInputStream fileInputStream = new FileInputStream(fileName);
-            ObjectInputStream objectInputStream =  new ObjectInputStream(fileInputStream);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             List<Employee> employees = (List<Employee>) objectInputStream.readObject();
             return employees;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
         return new ArrayList<>();

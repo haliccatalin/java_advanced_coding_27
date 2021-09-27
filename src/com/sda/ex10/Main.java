@@ -16,12 +16,15 @@ import java.util.Scanner;
  * f. ** support for the Director class - displaying information "everybody works - great!", "where is <name> ?!" (e.g. if the employee has left earlier).
  */
 public class Main {
+
+    final static List<Employee> employeeList = new ArrayList<>();
+
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
         boolean isRunning = true;
 
-        final List<Employee> employeeList = new ArrayList<>();
+        startWorking();
 
         while (isRunning) {
             System.out.println("1. Create director");
@@ -43,8 +46,10 @@ public class Main {
                     String phone = sc.nextLine();
                     System.out.print("Tool: ");
                     String tool = sc.nextLine();
+                    System.out.print("Earnings per hour: ");
+                    double earningPerHourDirector = Double.parseDouble(sc.nextLine());
 
-                    Director director = new Director(name, phone, tool);
+                    Director director = new Director(name, phone, tool, earningPerHourDirector);
                     employeeList.add(director);
                     break;
                 case "2":
@@ -55,8 +60,10 @@ public class Main {
                     String phone1 = sc.nextLine();
                     System.out.print("Tool: ");
                     String tool1 = sc.nextLine();
+                    System.out.print("Earnings per hour: ");
+                    double earningPerHourManager = Double.parseDouble(sc.nextLine());
 
-                    Manager manager1 = new Manager(name1, phone1, tool1);
+                    Manager manager1 = new Manager(name1, phone1, tool1, earningPerHourManager);
                     employeeList.add(manager1);
                     break;
                 case "3":
@@ -67,19 +74,21 @@ public class Main {
                     String phone2 = sc.nextLine();
                     System.out.print("Tool: ");
                     String tool2 = sc.nextLine();
+                    System.out.print("Earnings per hour: ");
+                    double earningPerHourWorker = Double.parseDouble(sc.nextLine());
 
-                    Worker worker = new Worker(name2, phone2, tool2);
+                    Worker worker = new Worker(name2, phone2, tool2, earningPerHourWorker);
                     employeeList.add(worker);
                     break;
                 case "4":
                     for (Employee employee : employeeList) {
                         //instanceof =>ne ajuta sa identificam clasa cu care a fost creat obiectul
                         if (employee instanceof Director) {
-                            System.out.println("Director: " + employee.getName() + " - " + employee.getTelephoneNumber() + " - " + employee.getTool());
+                            System.out.println("Director: " + employee.getName() + " - " + employee.getTelephoneNumber() + " - " + employee.getTool() + " - " + employee.getEarnings());
                         } else if (employee instanceof Manager) {
-                            System.out.println("Manager: " + employee.getName() + " - " + employee.getTelephoneNumber() + " - " + employee.getTool());
+                            System.out.println("Manager: " + employee.getName() + " - " + employee.getTelephoneNumber() + " - " + employee.getTool() + " - " + employee.getEarnings());
                         } else if (employee instanceof Worker) {
-                            System.out.println("Worker: " + employee.getName() + " - " + employee.getTelephoneNumber() + " - " + employee.getTool());
+                            System.out.println("Worker: " + employee.getName() + " - " + employee.getTelephoneNumber() + " - " + employee.getTool() + " - " + employee.getEarnings());
                         }
 
                     }
@@ -145,6 +154,29 @@ public class Main {
             System.err.println(e.getMessage());
         }
         return new ArrayList<>();
+
+    }
+
+    public static void startWorking() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        employeeList.stream().
+                                forEach((employee) -> {
+                                    employee.increaseEarnings();
+                                    // System.out.println(employee);
+                                });
+                        Thread.sleep(1000 * 3);
+                    } catch (InterruptedException e) {
+                        // System.out.println(e.getMessage());
+                        System.err.println(e.getMessage());
+                    }
+                }
+            }
+        });
+        thread.start();
 
     }
 }
